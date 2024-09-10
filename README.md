@@ -10,7 +10,11 @@ Criar tarefas
 
 Visualizar tarefas
 
-Editar e excluir tarefas
+Editar tarefas
+
+Excluir tarefas
+
+Relacionamento de Tarefas com outros participantes
 
 ### Tecnologias Utilizadas
 Python (Flask)
