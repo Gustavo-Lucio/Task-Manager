@@ -20,7 +20,10 @@ Clone o repositório:
 git clone https://github.com/Gustavo-Lucio/Task-Manager.git
 
 ## Instale as dependências:
+```DEPENDENCIAS
 pip install Flask Flask-Login Flask-WTF Flask-SQLAlchemy
 
 ## Execute a aplicação
+
+```START
 main.py
