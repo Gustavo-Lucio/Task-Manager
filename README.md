@@ -16,8 +16,10 @@ HTML
 SQLite
 
 ## Instalação
-Clone o repositório:
+### Clone o repositório:
+```
 git clone https://github.com/Gustavo-Lucio/Task-Manager.git
+```
 
 ## Instale as dependências:
 ```DEPENDENCIAS
