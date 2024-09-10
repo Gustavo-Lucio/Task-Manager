@@ -14,7 +14,9 @@ Editar e excluir tarefas
 
 ### Tecnologias Utilizadas
 Python (Flask)
+
 HTML
+
 SQLite
 
 ## Instalação
