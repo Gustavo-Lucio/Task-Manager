@@ -30,6 +30,11 @@ git clone https://github.com/Gustavo-Lucio/Task-Manager.git
 pip install Flask Flask-Login Flask-WTF Flask-SQLAlchemy
 ```
 
+## Criar Base de Dados
+``` DB
+criarbanco.py
+```
+
 ## Execute a aplicação
 ```START
 main.py
