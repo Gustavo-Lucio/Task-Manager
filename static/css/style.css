@@ -1,0 +1,21 @@
+#btn-logout-dash{
+    font-weight: bold;
+    margin-left: 70%;
+}
+
+#btn-create-dash{
+    font-weight: bold;
+    margin-right: 55%;
+}
+
+.dash-text{
+    margin-bottom: 50px;
+}
+
+.br-margin-30{
+    margin-bottom: 30px;
+}
+
+#participantes{
+    margin-left: 20px;
+}

@@ -1,6 +1,6 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, flash, request
 from config import app, db
-from models import load_user, User
+from models import load_user, User, Event
 from flask_login import login_required, login_user, logout_user, current_user
 
 
@@ -67,17 +67,56 @@ def logout():
 @login_required
 def dashboard():
     from models import Event
-    todos_eventos = Event.query.all()  # Recupera todos os eventos
-    meus_eventos = Event.query.filter_by(user_id=current_user.id).all()  # Recupera os eventos do usuário logado
 
-    return render_template('dashboard.html', todos_eventos=todos_eventos, meus_eventos=meus_eventos)
+    # Buscar eventos criados pelo usuário logado
+    meus_eventos = Event.query.filter_by(user_id=current_user.id).all()
 
+    # Buscar eventos em que o usuário logado é participante
+    eventos_participante = current_user.participated_events
+
+    # Verificar se há eventos para exibir
+    if not meus_eventos and not eventos_participante:
+        flash('Você não tem eventos para mostrar.', 'info')
+
+    return render_template('dashboard.html', meus_eventos=meus_eventos, eventos_participante=eventos_participante)
+
+
+# @app.route('/create_event', methods=['GET', 'POST'])
+# def create_event():
+#     from forms import EventForm
+#     from models import Event
+#     formulario = EventForm()  # Instancie o formulário
+#
+#     if formulario.validate_on_submit():
+#         nome_evento = formulario.event_name.data
+#         data_evento = formulario.event_date.data
+#         descricao = formulario.description.data
+#
+#         # Crie uma nova instância do modelo Event, associando o usuário atual
+#         novo_evento = Event(
+#             nome=nome_evento,
+#             data_evento=data_evento,
+#             descricao=descricao,
+#             user_id=current_user.id  # Associando o evento ao usuário logado
+#         )
+#
+#         # Adicione o evento ao banco de dados
+#         db.session.add(novo_evento)
+#         db.session.commit()
+#
+#         return redirect(url_for('dashboard'))  # Redireciona após criar o evento
+#
+#     return render_template('create_event.html', form=formulario)
 
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
     from forms import EventForm
-    from models import Event
+    from models import Event, User
     formulario = EventForm()  # Instancie o formulário
+
+    # Buscar todos os usuários do banco de dados para preencher o campo de participantes
+    usuarios = User.query.all()
+    formulario.participants.choices = [(user.id, user.usuario) for user in usuarios]
 
     if formulario.validate_on_submit():
         nome_evento = formulario.event_name.data
@@ -92,6 +131,12 @@ def create_event():
             user_id=current_user.id  # Associando o evento ao usuário logado
         )
 
+        # Adicionar participantes selecionados ao evento
+        participantes_selecionados = formulario.participants.data
+        for user_id in participantes_selecionados:
+            user = User.query.get(user_id)
+            novo_evento.participants.append(user)
+
         # Adicione o evento ao banco de dados
         db.session.add(novo_evento)
         db.session.commit()
@@ -100,33 +145,48 @@ def create_event():
 
     return render_template('create_event.html', form=formulario)
 
-
 @app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
+@login_required
 def edit_event(event_id):
     from forms import EventForm
-    from models import Event
+    from models import Event, User
 
-    # Buscar o evento pelo ID
+    # Obter o evento a ser editado
     evento = Event.query.get_or_404(event_id)
 
+    # Verificar se o usuário logado é o criador do evento
     if evento.user_id != current_user.id:
+        flash('Você não tem permissão para editar este evento.', 'danger')
         return redirect(url_for('dashboard'))
 
+    # Instanciar o formulário
     formulario = EventForm(obj=evento)
 
+    # Carregar todos os usuários para a lista de participantes
+    usuarios = User.query.all()
+    formulario.participants.choices = [(user.id, user.usuario) for user in usuarios]
+
+    # Preencher o campo de participantes com os usuários já selecionados
+    if request.method == 'GET':
+        formulario.participants.data = [user.id for user in evento.participants]
+
+    # Se o formulário for validado
     if formulario.validate_on_submit():
         evento.nome = formulario.event_name.data
         evento.data_evento = formulario.event_date.data
         evento.descricao = formulario.description.data
+
+        # Atualizar os participantes
+        participantes_selecionados = formulario.participants.data
+        evento.participants = [User.query.get(user_id) for user_id in participantes_selecionados]
+
+        # Salvar no banco de dados
         db.session.commit()
+        flash('Evento atualizado com sucesso!', 'success')
         return redirect(url_for('dashboard'))
 
-    # Teste manual forçando os dados do formulário
-    formulario.event_name.data = evento.nome
-    formulario.event_date.data = evento.data_evento
-    formulario.description.data = evento.descricao
-
     return render_template('edit_event.html', form=formulario)
+
 
 
 @app.route('/delete_event/<int:event_id>', methods=['POST'])
