@@ -5,7 +5,7 @@
 ### Descrição
 Aplicação simples para gerenciar tarefas, desenvolvida com Python e HTML. Permite criar, visualizar e gerenciar tarefas de forma intuitiva.
 
-###Funcionalidades
+### Funcionalidades
 Criar tarefas
 Visualizar tarefas
 Editar e excluir tarefas
@@ -15,12 +15,12 @@ Python (Flask)
 HTML
 SQLite
 
-##Instalação
+## Instalação
 Clone o repositório:
 git clone https://github.com/Gustavo-Lucio/Task-Manager.git
 
-##Instale as dependências:
+## Instale as dependências:
 pip install Flask Flask-Login Flask-WTF Flask-SQLAlchemy
 
-Execute a aplicação
+## Execute a aplicação
 main.py
