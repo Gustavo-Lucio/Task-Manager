@@ -1,7 +1,8 @@
-from flask import render_template, redirect, url_for, Flask
+from flask import render_template, redirect, url_for
 from config import app, db
 from models import load_user, User
 from flask_login import login_required, login_user, logout_user, current_user
+
 
 @app.route('/')
 def home():
@@ -65,29 +66,85 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    from models import Event
+    todos_eventos = Event.query.all()  # Recupera todos os eventos
+    meus_eventos = Event.query.filter_by(user_id=current_user.id).all()  # Recupera os eventos do usuário logado
+
+    return render_template('dashboard.html', todos_eventos=todos_eventos, meus_eventos=meus_eventos)
 
 
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
     from forms import EventForm
+    from models import Event
     formulario = EventForm()  # Instancie o formulário
 
-    if formulario.validate_on_submit():  # Verifique se o formulário foi validado
-        # lógica para criar evento
-        pass
+    if formulario.validate_on_submit():
+        nome_evento = formulario.event_name.data
+        data_evento = formulario.event_date.data
+        descricao = formulario.description.data
+
+        # Crie uma nova instância do modelo Event, associando o usuário atual
+        novo_evento = Event(
+            nome=nome_evento,
+            data_evento=data_evento,
+            descricao=descricao,
+            user_id=current_user.id  # Associando o evento ao usuário logado
+        )
+
+        # Adicione o evento ao banco de dados
+        db.session.add(novo_evento)
+        db.session.commit()
+
+        return redirect(url_for('dashboard'))  # Redireciona após criar o evento
 
     return render_template('create_event.html', form=formulario)
 
 
 @app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
 def edit_event(event_id):
-    return render_template('edit_event.html')
+    from forms import EventForm
+    from models import Event
+
+    # Buscar o evento pelo ID
+    evento = Event.query.get_or_404(event_id)
+
+    if evento.user_id != current_user.id:
+        return redirect(url_for('dashboard'))
+
+    formulario = EventForm(obj=evento)
+
+    if formulario.validate_on_submit():
+        evento.nome = formulario.event_name.data
+        evento.data_evento = formulario.event_date.data
+        evento.descricao = formulario.description.data
+        db.session.commit()
+        return redirect(url_for('dashboard'))
+
+    # Teste manual forçando os dados do formulário
+    formulario.event_name.data = evento.nome
+    formulario.event_date.data = evento.data_evento
+    formulario.description.data = evento.descricao
+
+    return render_template('edit_event.html', form=formulario)
 
 
 @app.route('/delete_event/<int:event_id>', methods=['POST'])
 def delete_event(event_id):
-    pass
+    from models import Event
+
+    # Buscar o evento pelo ID
+    evento = Event.query.get_or_404(event_id)
+
+    # Verificar se o usuário logado é o dono do evento
+    if evento.user_id != current_user.id:
+        return redirect(url_for('dashboard'))
+
+    # Deletar o evento
+    db.session.delete(evento)
+    db.session.commit()
+
+    return redirect(url_for('dashboard'))
 
 
 if __name__ == '__main__':
