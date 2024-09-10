@@ -6,7 +6,7 @@
 Aplicação simples para gerenciar tarefas, desenvolvida com Python e HTML. Permite criar, visualizar e gerenciar tarefas de forma intuitiva.
 
 ### Funcionalidades
-Criar tarefas
+Criar tarefas \n
 Visualizar tarefas
 Editar e excluir tarefas
 
