@@ -25,7 +25,7 @@ SQLite
 git clone https://github.com/Gustavo-Lucio/Task-Manager.git
 ```
 
-## Instale as dependências:
+## Dependências:
 ```DEPENDENCIAS
 pip install Flask Flask-Login Flask-WTF Flask-SQLAlchemy
 ```
