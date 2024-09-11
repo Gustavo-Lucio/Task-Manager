@@ -122,7 +122,7 @@ def create_event():
     from models import Event, User
     formulario = EventForm()
 
-    usuarios = User.query.all()
+    usuarios = User.query.filter(User.id != current_user.id).all()
     formulario.participants.choices = [(user.id, user.usuario) for user in usuarios]
 
     if formulario.validate_on_submit():
@@ -167,15 +167,15 @@ def edit_event(event_id):
     evento = Event.query.get_or_404(event_id)
 
     # Verificar se o usuário logado é o criador do evento
-    if evento.user_id != current_user.id:
+    if evento.user_id != current_user.id and current_user not in evento.participants:
         flash('Você não tem permissão para editar este evento.', 'danger')
         return redirect(url_for('dashboard'))
 
     # Instanciar o formulário
     formulario = EventForm(obj=evento)
 
-    # Carregar todos os usuários para a lista de participantes
-    usuarios = User.query.all()
+    # Filtrar os usuários para que o próprio usuário logado não apareça na lista
+    usuarios = User.query.filter(User.id != current_user.id).all()
     formulario.participants.choices = [(user.id, user.usuario) for user in usuarios]
 
     # Preencher o campo de participantes com os usuários já selecionados
@@ -196,6 +196,11 @@ def edit_event(event_id):
         db.session.commit()
         flash('Evento atualizado com sucesso!', 'success')
         return redirect(url_for('dashboard'))
+
+    # Teste manual forçando os dados do formulário
+    formulario.event_titulo.data = evento.titulo
+    formulario.event_status.data = evento.status
+    formulario.description.data = evento.descricao
 
     return render_template('edit_event.html', form=formulario)
 

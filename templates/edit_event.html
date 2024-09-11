@@ -21,21 +21,12 @@ Novo Evento
                 {{ form.event_titulo(class="form-control", placeholder="Nome do Evento...") }}
             </div>
 
-            <!-- Campo para data do evento -->
-            <div class="mb-3">
-                {{ form.event_date.label(class="form-label") }}
-                {{ form.event_date(class="form-control") }}
-            </div>
-
             <!-- Campo para status do evento -->
             <div class="mb-3">
                 {{ form.event_status.label(class="form-label") }}
-                <select name="status" class="form-select">
-                    <option value="Pendente" {% if form.event_status.data == 'Pendente' %}selected{% endif %}>Pendente</option>
-                    <option value="Em andamento" {% if form.event_status.data == 'Em andamento' %}selected{% endif %}>Em andamento</option>
-                    <option value="Concluída" {% if form.event_status.data == 'Concluída' %}selected{% endif %}>Concluída</option>
-                </select>
+                {{ form.event_status(class="form-select") }}
             </div>
+
 
             <!-- Campo para descrição do evento -->
             <div class="mb-3">
