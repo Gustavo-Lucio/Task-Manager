@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, DateField, TextAreaField
-from wtforms.fields.choices import SelectMultipleField
+from wtforms.fields.choices import SelectMultipleField, SelectField
 from wtforms.validators import DataRequired, Length
 from wtforms.widgets.core import ListWidget, CheckboxInput
 
@@ -18,8 +18,12 @@ class LoginForm(FlaskForm):
 
 
 class EventForm(FlaskForm):
-    event_name = StringField('Nome do Evento', validators=[DataRequired()])
-    event_date = DateField('Data do Evento', format='%Y-%m-%d', validators=[DataRequired()])
+    event_titulo = StringField('Titulo', validators=[DataRequired()])
+    event_status = SelectField('Status',
+                                   choices=[('Pendente', 'Pendente'),
+                                        ('Em andamento', 'Em andamento'),
+                                        ('Concluída', 'Concluída')],
+                                   validators=[DataRequired()])
     description = TextAreaField('Descrição', validators=[DataRequired()])
     participants = SelectMultipleField('Participantes', coerce=int, widget=ListWidget(prefix_label=False), option_widget=CheckboxInput())
     submit = SubmitField('Salvar Alterações')

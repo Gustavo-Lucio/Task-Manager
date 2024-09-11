@@ -5,62 +5,6 @@
 {% endblock %}
 
  {% block body %}
-<!--   <div class="container vh-100 d-flex justify-content-center align-items-center">-->
-<!--    <div class="card p-4" style="width: 100%; max-width: 95%;">-->
-
-<!--        <h1 class="dash-text">Dashboard</h1>-->
-<!--        <div class="row align-items-start">-->
-<!--            <div class="col">-->
-<!--      <a href="{{ url_for('create_event') }}"> <button type="button" class="btn btn-primary" id="btn-create-dash">Criar Nova Tarefa</button> </a>-->
-<!--    </div>-->
-<!--            <div class="col">-->
-<!--       <a>  </a>-->
-<!--    </div>-->
-<!--            <div class="col">-->
-<!--       <a href="{{ url_for('logout') }}"><button type="button" class="btn btn-outline-danger" id="btn-logout-dash">Logout</button></a>-->
-<!--    </div>-->
-
-
-
-<!--        </div>-->
-<!--        <hr>-->
-<!--        <h3>Todos os Eventos</h3>-->
-
-<!--        <ul>-->
-<!--            {% for event in todos_eventos %}-->
-<!--                <li>{{ event.event_name }} - {{ event.event_date }} - {{ event.description }}</li>-->
-<!--            {% endfor %}-->
-<!--        </ul>-->
-
-
-
-<!--        <hr>-->
-
-<!--        <h3>Eventos Criados</h3>-->
-<!--        <table>-->
-<!--            <tr>-->
-<!--                <th>Título</th>-->
-<!--                <th>Descrição</th>-->
-<!--                <th>Status</th>-->
-<!--            </tr>-->
-<!--            {% for event in meus_eventos %}-->
-<!--                <tr>-->
-<!--                    <td>{{ event.event_name }}</td>-->
-<!--                    <td>{{ event.event_date }}</td>-->
-<!--                    <td>{{ event.description }}</td>-->
-<!--                    <td>-->
-<!--                        <a href="{{ url_for('edit_event', event_id=event.id) }}"><button type="button" class="btn btn-outline-warning">Editar</button></a>-->
-<!--                        <form action="{{ url_for('delete_event', event_id=event.id) }}" method="POST" style="display:inline;">-->
-<!--                            <button type="submit" onclick="return confirm('Você tem certeza que deseja excluir?')" class="btn btn-outline-danger">Excluir</button>-->
-<!--                        </form>-->
-<!--                    </td>-->
-<!--                </tr>-->
-<!--            {% endfor %}-->
-<!--        </table>-->
-
-<!--    </div>-->
-<!--   </div>-->
-
 <div class="container vh-100 d-flex justify-content-center align-items-center">
     <div class="card p-4" style="width: 100%; max-width: 95%;">
 
@@ -86,8 +30,8 @@
         <table class="table table-striped table-hover">
             <thead class="table-light">
                 <tr>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Data</th>
+                    <th scope="col">Título</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Descrição</th>
                     <th scope="col">Ações</th>
                 </tr>
@@ -95,8 +39,18 @@
             <tbody>
                 {% for event in meus_eventos %}
                     <tr>
-                        <td>{{ event.nome }}</td>
-                        <td>{{ event.data_evento }}</td>
+                        <td>{{ event.titulo }}</td>
+                        <td>
+                            <!-- Formulário para alterar o status -->
+                            <form action="{{ url_for('update_status', event_id=event.id) }}" method="POST">
+                                <select name="status" class="form-select form-select-sm">
+                                    <option value="Pendente" {% if event.status == 'Pendente' %}selected{% endif %}>Pendente</option>
+                                    <option value="Em andamento" {% if event.status == 'Em andamento' %}selected{% endif %}>Em andamento</option>
+                                    <option value="Concluída" {% if event.status == 'Concluída' %}selected{% endif %}>Concluída</option>
+                                </select>
+                                <button type="submit" class="btn btn-outline-primary btn-sm mt-2">Atualizar Status</button>
+                            </form>
+                        </td>
                         <td>{{ event.descricao }}</td>
                         <td>
                             <a href="{{ url_for('edit_event', event_id=event.id) }}">
@@ -118,16 +72,16 @@
         <table class="table table-striped table-hover">
             <thead class="table-light">
                 <tr>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Data</th>
+                    <th scope="col">Título</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Descrição</th>
                 </tr>
             </thead>
             <tbody>
                 {% for event in eventos_participante %}
                     <tr>
-                        <td>{{ event.nome }}</td>
-                        <td>{{ event.data_evento }}</td>
+                        <td>{{ event.titulo }}</td>
+                        <td>{{ event.status }}</td>
                         <td>{{ event.descricao }}</td>
                     </tr>
                 {% endfor %}
@@ -135,6 +89,4 @@
         </table>
     </div>
 </div>
-
-
 {% endblock %}

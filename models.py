@@ -24,8 +24,8 @@ event_participants = db.Table('event_participants',
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(100), nullable=False)
-    data_evento = db.Column(db.Date, nullable=False)
+    titulo = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(20), nullable=False)
     descricao = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
