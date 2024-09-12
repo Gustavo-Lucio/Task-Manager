@@ -14,7 +14,7 @@ Editar tarefas
 
 Excluir tarefas
 
-Relacionamento de Tarefas com outros participantes
+Relacionamento de tarefas com outros participantes
 
 ### Tecnologias Utilizadas
 Python (Flask)
