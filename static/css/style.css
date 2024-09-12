@@ -1,21 +1,46 @@
-#btn-logout-dash{
+#btn-logout-dash {
     font-weight: bold;
     margin-left: 70%;
 }
 
-#btn-create-dash{
+#btn-create-dash {
     font-weight: bold;
     margin-right: 55%;
 }
 
-.dash-text{
+.dash-text {
     margin-bottom: 50px;
 }
 
-.br-margin-30{
+.br-margin-30 {
     margin-bottom: 30px;
 }
 
-#participantes{
-    margin-left: 20px;
+#btn-dashboard, #btn-cancelar {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    text-decoration: none !important;;
+}
+
+.text-title, #text-title {
+    margin-bottom: 30px;
+}
+
+li::marker {
+    content: none;
+}
+
+#edit-btn,#edit-btn2 {
+    margin-right: 30px;
+    margin-left: 10px;
+}
+
+#exclude-btn, #exclude-btn2{
+    margin-right: 0px;
+    margin-left: 10px;
+}
+
+.btn btn-outline-secondary btn-lg{
+    text-decoration: none;
 }

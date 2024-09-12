@@ -29,6 +29,5 @@ class Event(db.Model):
     descricao = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    # Relacionamento com os participantes (muitos-para-muitos)
     participants = db.relationship('User', secondary=event_participants, lazy='subquery',
                                    backref=db.backref('participated_events', lazy=True))

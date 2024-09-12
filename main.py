@@ -89,32 +89,7 @@ def dashboard():
     return render_template('dashboard.html', meus_eventos=meus_eventos, eventos_participante=eventos_participante)
 
 
-# @app.route('/create_event', methods=['GET', 'POST'])
-# def create_event():
-#     from forms import EventForm
-#     from models import Event
-#     formulario = EventForm()  # Instancie o formulário
-#
-#     if formulario.validate_on_submit():
-#         nome_evento = formulario.event_name.data
-#         data_evento = formulario.event_date.data
-#         descricao = formulario.description.data
-#
-#         # Crie uma nova instância do modelo Event, associando o usuário atual
-#         novo_evento = Event(
-#             nome=nome_evento,
-#             data_evento=data_evento,
-#             descricao=descricao,
-#             user_id=current_user.id  # Associando o evento ao usuário logado
-#         )
-#
-#         # Adicione o evento ao banco de dados
-#         db.session.add(novo_evento)
-#         db.session.commit()
-#
-#         return redirect(url_for('dashboard'))  # Redireciona após criar o evento
-#
-#     return render_template('create_event.html', form=formulario)
+
 
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
@@ -139,7 +114,6 @@ def create_event():
             user_id=current_user.id
         )
 
-        # Adicionar participantes
         participantes_selecionados = formulario.participants.data
         for user_id in participantes_selecionados:
             user = User.query.get(user_id)
@@ -163,41 +137,32 @@ def edit_event(event_id):
     from forms import EventForm
     from models import Event, User
 
-    # Obter o evento a ser editado
     evento = Event.query.get_or_404(event_id)
 
-    # Verificar se o usuário logado é o criador do evento
     if evento.user_id != current_user.id and current_user not in evento.participants:
         flash('Você não tem permissão para editar este evento.', 'danger')
         return redirect(url_for('dashboard'))
 
-    # Instanciar o formulário
     formulario = EventForm(obj=evento)
 
-    # Filtrar os usuários para que o próprio usuário logado não apareça na lista
     usuarios = User.query.filter(User.id != current_user.id).all()
     formulario.participants.choices = [(user.id, user.usuario) for user in usuarios]
 
-    # Preencher o campo de participantes com os usuários já selecionados
     if request.method == 'GET':
         formulario.participants.data = [user.id for user in evento.participants]
 
-    # Se o formulário for validado
     if formulario.validate_on_submit():
         evento.titulo = formulario.event_titulo.data
         evento.status = formulario.event_status.data
         evento.descricao = formulario.description.data
 
-        # Atualizar os participantes
         participantes_selecionados = formulario.participants.data
         evento.participants = [User.query.get(user_id) for user_id in participantes_selecionados]
 
-        # Salvar no banco de dados
         db.session.commit()
         flash('Evento atualizado com sucesso!', 'success')
         return redirect(url_for('dashboard'))
 
-    # Teste manual forçando os dados do formulário
     formulario.event_titulo.data = evento.titulo
     formulario.event_status.data = evento.status
     formulario.description.data = evento.descricao
@@ -210,14 +175,11 @@ def edit_event(event_id):
 def delete_event(event_id):
     from models import Event
 
-    # Buscar o evento pelo ID
     evento = Event.query.get_or_404(event_id)
 
-    # Verificar se o usuário logado é o dono do evento
     if evento.user_id != current_user.id:
         return redirect(url_for('dashboard'))
 
-    # Deletar o evento
     db.session.delete(evento)
     db.session.commit()
 
